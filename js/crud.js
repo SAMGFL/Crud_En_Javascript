@@ -21,6 +21,25 @@ export class CRUD{
 		if(tableName == undefined) throw new Error("Table name required");
 	}
     
+    #save(){
+        let DataToSave = JSON.stringify(this.data);
+        sessionStorage.setItem(this.#tableName, DataToSave);
+    }
+
+    #Get(key){
+        let data = sessionStorage.getItem(key);
+        return JSON.parse(data);
+    }
+
+    #ExistElementWithId(id){
+        return this.#data[id] === undefined ? false : true;
+    }
+    
+    #CheckThatElementExistsWithId(id){
+        if(!this.#ExistElementWithId(id))
+            throw new Error("This element not exists");
+    }
+    
     create(data){
         this.data.push(data);
         this.#save();
@@ -28,6 +47,7 @@ export class CRUD{
     }
 
 	read(id){
+        this.#CheckThatElementExistsWithId(id);
         return this.#data[id];
     }
     readAll(id){
@@ -35,21 +55,15 @@ export class CRUD{
     }
 
 	update(id, data){
+        this.#CheckThatElementExistsWithId(id);
         return this.#data[id]= data;
         return true;
     }
 
 	delete(id){
+        this.#CheckThatElementExistsWithId(id);
         return this.#data.splice(id,1);
         this.#save();
         return true;
-    }
-    #save(){
-        let DataToSave = JSON.stringify(this.data);
-        sessionStorage.setItem(this.#tableName, DataToSave);
-    }
-    #Get(key){
-        let data = sessionStorage.getItem(key);
-        return JSON.parse(data);
     }
 }
